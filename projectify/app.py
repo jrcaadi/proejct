@@ -1,6 +1,6 @@
 import openai
 
-openai.api_key = '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'
+openai.api_key = '..'
 
 def get_input(prompt_text, valid_options=None, validation_func=None):
     while True:
