@@ -1,6 +1,6 @@
 import openai
 
-openai.api_key = '..'
+openai.api_key = 'xx'
 
 def get_input(prompt_text, valid_options=None, validation_func=None):
     while True:
@@ -14,14 +14,14 @@ def get_input(prompt_text, valid_options=None, validation_func=None):
 
 def generate_project_ideas():
     field = get_input("Which field (closest SDG) that links to it if applicable? ")
-    budget = get_input("Budget? ")
+    budget = get_input("Budget? (specify the currrency )")
     group_size = get_input("Group size? ", validation_func=lambda x: x.isdigit() and int(x) > 0)
     planned_scale = get_input("Planned scale to reach? ")
-    project_description = get_input("Project description/specifications/requirements? ")
     purpose = get_input("Purpose? ")
-    audience = get_input("Audience? ")
+    project_description = get_input("Project description/specifications/requirements? ")
+    location = get_input("Please enter which are do you want to set this up in (be specific with the location)")
 
-    answers = f"Field: {field}\nBudget: {budget}\nGroup size: {group_size}\nPlanned scale: {planned_scale}\nProject description: {project_description}\nPurpose: {purpose}\nAudience: {audience}"
+    answers = f"Field: {field}\nBudget: {budget}\nGroup size: {group_size}\nPlanned scale: {planned_scale}\nProject description: {project_description}\nPurpose: {purpose}\location: {location}"
     prompt = f"""
     Student answers:
     {answers}
@@ -41,7 +41,7 @@ def generate_project_ideas():
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant providing detailed and specific project ideas."},
+                {"role": "system", "content": "You are an experienced counsellor who gives very detailed and informative advice to the users. You have the knowledge and scale the projects on local, national and international levels and cater completely to the needs of the user. When you are giving your advice(which is the advice to the user ), always remember that he is a student who wants to develop a project and is coming to you to create a plan of action for the future and adhere to the finanacial limits and the budget that the student has entered before . When you are giving advice, also remember that you have a community called Projectify. Find the best time to pitch them to this community while adding this link(https://discord.gg/RC2cthWUCM) but do it only one in one conversation"},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=3000,
@@ -55,7 +55,7 @@ def generate_project_ideas():
 
 def get_in_depth_knowledge(chosen_project):
     prompt = f"""
-    Provide an in-depth, step-by-step guide for executing the project: {chosen_project}. The guide should include the following comprehensive details:
+    Provide an in-depth, step-by-step guide for executing the project: {chosen_project}. You should also consider the prompts given by the user before this chat in the previous conversation. The guide should include the following comprehensive details:
 
     1. Planning Phase:
        a. Define the project scope and specific objectives in detail.
@@ -83,13 +83,24 @@ def get_in_depth_knowledge(chosen_project):
        a. Define clear success metrics and explain how to measure them effectively.
        b. Conduct a post-project evaluation, including collecting feedback from stakeholders and team members.
        c. Document lessons learned and best practices to inform future projects, providing detailed examples and recommendations.
+
+    6. Cost and funding:
+       a. Identify the initial and running costs of the projects and break them down 
+       b. Find the various ways he can raise the funds at the level he wants to run this project 
+       c. how he can use his friends and cut costs to run the project collaboration
+
+    7. Team management
+       a. Make a list of team members he will need but only give 5 members maximum(for instance: logistics heads, tech head, more)
+       b. Give roles to the team members and allocate the first 2 steps that they will have to carry out
+       c. Give the statical contributions of the team members throughout the process
+       d. Create a todo list for the project overall
     """
 
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant providing detailed and specific project execution steps."},
+                {"role": "system", "content": "You are an experienced counselor who gives very detailed and informative advice to the users. You have the knowledge and scale the projects on local, national and international levels and cater completely to the needs of the user. When you are giving your advice(which is the advice to the user ), always remember that he is a student who wants to develop a project and is coming to you to create a plan of action for the future and adhere to the finanacial limits and the budget that the student has entered before . When you are giving advice, also remember that you have a community called Projectify. Find the best time to pitch them to this community while adding this link(https://discord.gg/RC2cthWUCM) but do it only one in one conversation "},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=3000,
@@ -113,7 +124,7 @@ def chat():
             response = openai.ChatCompletion.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are an experienced counselor who gives very detailed and informative advice to the users. You have the knowledge and scale the projects on local, national, and international levels and cater completely to the needs of the user. When you are giving your advice, always remember that he is a student who wants to develop a project and is coming to you to create a plan of action for the future. When you are giving advice, also remember that you have a community called Projectify. Find the best time to pitch them to this community but do it only once in one conversation."},
+                    {"role": "system", "content": "You are an experienced counsellor who gives very detailed and informative advice to the users. You have the knowledge and scale the projects on local, national and international levels and cater completely to the needs of the user. When you are giving your advice(which is the advice to the user ), always remember that he is a student who wants to develop a project and is coming to you to create a plan of action for the future and adhere to the finanacial limits and the budget that the student has entered before . When you are giving advice, also remember that you have a community called Projectify. Find the best time to pitch them to this community while adding this link(https://discord.gg/RC2cthWUCM) but do it only one in one conversation"},
                     {"role": "user", "content": user_input}
                 ],
                 max_tokens=1000,
